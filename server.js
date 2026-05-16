@@ -30,8 +30,15 @@ app.use(
   }),
 );
 
-// Connect to database
-connnectionDB();
+// Middleware to ensure DB is connected before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await connnectionDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Database connection failed", error: error.message });
+  }
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api", studentRouter);
