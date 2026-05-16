@@ -14,21 +14,21 @@ app.use(
   }),
 );
 
-// Connect to database first, then start server
-connnectionDB()
-  .then(() => {
-    app.use("/api/auth", authRouter);
-    app.use("/api", studentRouter);
+// Connect to database
+connnectionDB();
 
-    app.get("/", (req, res) => {
-      res.send("welcome");
-    });
+app.use("/api/auth", authRouter);
+app.use("/api", studentRouter);
 
-    app.listen(7000, () => {
-      console.log("Server running at http://localhost:7000");
-    });
-  })
-  .catch((err) => {
-    console.error("Failed to start server:", err.message);
-    process.exit(1);
+app.get("/", (req, res) => {
+  res.send("welcome");
+});
+
+// Conditionally listen if not running on Vercel
+if (!process.env.VERCEL) {
+  app.listen(7000, () => {
+    console.log("Server running at http://localhost:7000");
   });
+}
+
+export default app;
